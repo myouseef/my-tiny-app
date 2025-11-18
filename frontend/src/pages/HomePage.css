@@ -1,0 +1,297 @@
+/* تنسيقات الصفحة الرئيسية */
+
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-container {
+  max-width: 1200px;
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* Header */
+.home-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.home-title {
+  font-size: 2.5rem;
+  margin: 0 0 15px 0;
+  font-weight: 700;
+}
+
+.home-subtitle {
+  font-size: 1.2rem;
+  margin: 0;
+  opacity: 0.95;
+}
+
+/* Main Content */
+.home-content {
+  padding: 40px;
+}
+
+/* Sections */
+.home-content section {
+  margin-bottom: 40px;
+}
+
+.home-content h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.home-content h3 {
+  font-size: 1.5rem;
+  color: #444;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-content p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* Welcome Section */
+.welcome-section {
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Technologies Grid */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.tech-card {
+  background: #f8f9fa;
+  padding: 30px 20px;
+  border-radius: 15px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.tech-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.tech-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.tech-card h4 {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 10px 0;
+}
+
+.tech-card p {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Features List */
+.features-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.features-list li {
+  font-size: 1.1rem;
+  color: #555;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+/* CTA Section */
+.cta-section {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 15px;
+  margin: 40px 0;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.cta-button:active {
+  transform: translateY(0);
+}
+
+/* Demo Credentials */
+.demo-credentials {
+  margin-top: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  display: inline-block;
+  text-align: left;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.demo-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.demo-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.demo-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.demo-info code {
+  background: #f8f9fa;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  color: #667eea;
+  font-weight: 600;
+  border: 1px solid #e0e0e0;
+}
+
+/* About Section */
+.about-section {
+  background: #f8f9fa;
+  padding: 30px;
+  border-radius: 15px;
+}
+
+/* Footer */
+.home-footer {
+  background: #2d3748;
+  color: white;
+  text-align: center;
+  padding: 30px;
+}
+
+.home-footer p {
+  margin: 0;
+  color: #cbd5e0;
+}
+
+.footer-link {
+  color: #667eea;
+  text-decoration: none;
+  margin-left: 10px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #764ba2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home-title {
+    font-size: 2rem;
+  }
+
+  .home-subtitle {
+    font-size: 1rem;
+  }
+
+  .home-content {
+    padding: 30px 20px;
+  }
+
+  .home-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .home-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .tech-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .features-list {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-button {
+    width: 100%;
+    padding: 15px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page {
+    padding: 10px;
+  }
+
+  .home-header {
+    padding: 40px 20px;
+  }
+
+  .home-title {
+    font-size: 1.5rem;
+  }
+
+  .home-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .home-content {
+    padding: 20px 15px;
+  }
+}
