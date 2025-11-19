@@ -3,36 +3,40 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDashboard, logout } from '../services/api';
+import { supabase } from '../supabaseClient';
 import './DashboardPage.css';
 
 function DashboardPage() {
   const navigate = useNavigate();
   
   // State للبيانات
-  const [dashboardData, setDashboardData] = useState(null);
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // جلب بيانات Dashboard عند تحميل الصفحة
+  // جلب بيانات المستخدم عند تحميل الصفحة
   useEffect(() => {
-    fetchDashboardData();
+    fetchUserData();
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchUserData = async () => {
     setIsLoading(true);
     setError('');
     
     try {
-      const response = await getDashboard();
+      const { data: { user }, error } = await supabase.auth.getUser();
       
-      if (response.ok && response.data.success) {
-        setDashboardData(response.data.dashboard);
+      if (error) {
+        setError('فشل جلب بيانات المستخدم');
+        console.error('Error:', error);
+      } else if (user) {
+        setUser(user);
+        console.log('✅ تم جلب بيانات المستخدم:', user.email);
       } else {
-        setError(response.data.message || 'فشل جلب البيانات');
+        setError('لم يتم العثور على مستخدم');
       }
     } catch (err) {
-      setError('حدث خطأ في الاتصال بالخادم');
+      setError('حدث خطأ في الاتصال');
       console.error('Dashboard error:', err);
     } finally {
       setIsLoading(false);
@@ -42,11 +46,11 @@ function DashboardPage() {
   // معالج تسجيل الخروج
   const handleLogout = async () => {
     try {
-      await logout();
+      await supabase.auth.signOut();
+      console.log('✅ تم تسجيل الخروج');
       navigate('/');
     } catch (err) {
       console.error('Logout error:', err);
-      // حتى لو فشل الطلب، نحذف Token ونعيد التوجيه
       navigate('/');
     }
   };
@@ -74,7 +78,7 @@ function DashboardPage() {
             <div className="error-icon">❌</div>
             <h2>حدث خطأ</h2>
             <p>{error}</p>
-            <button onClick={fetchDashboardData} className="retry-button">
+            <button onClick={fetchUserData} className="retry-button">
               إعادة المحاولة
             </button>
             <button onClick={handleLogout} className="logout-button-alt">
@@ -95,7 +99,7 @@ function DashboardPage() {
           <div className="header-content">
             <div className="header-left">
               <h1 className="dashboard-title">لوحة التحكم</h1>
-              <p className="dashboard-subtitle">{dashboardData?.welcomeMessage}</p>
+              <p className="dashboard-subtitle">مرحباً {user?.email}</p>
             </div>
             <button onClick={handleLogout} className="logout-button">
               <span className="logout-icon">🚪</span>
@@ -114,18 +118,18 @@ function DashboardPage() {
             </div>
             <div className="card-body">
               <div className="info-row">
-                <span className="info-label">اسم المستخدم:</span>
-                <span className="info-value">{dashboardData?.user?.username}</span>
+                <span className="info-label">البريد الإلكتروني:</span>
+                <span className="info-value">{user?.email}</span>
               </div>
               <div className="info-row">
                 <span className="info-label">معرف المستخدم:</span>
-                <span className="info-value">#{dashboardData?.user?.id}</span>
+                <span className="info-value">#{user?.id?.substring(0, 8)}...</span>
               </div>
               <div className="info-row">
                 <span className="info-label">عضو منذ:</span>
                 <span className="info-value">
-                  {dashboardData?.user?.memberSince 
-                    ? new Date(dashboardData.user.memberSince).toLocaleDateString('ar-EG', {
+                  {user?.created_at 
+                    ? new Date(user.created_at).toLocaleDateString('ar-EG', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
@@ -134,9 +138,16 @@ function DashboardPage() {
                 </span>
               </div>
               <div className="info-row">
-                <span className="info-label">عدد الأيام:</span>
+                <span className="info-label">آخر تسجيل دخول:</span>
                 <span className="info-value highlight">
-                  {dashboardData?.user?.daysSinceJoined} يوم
+                  {user?.last_sign_in_at 
+                    ? new Date(user.last_sign_in_at).toLocaleString('ar-EG', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: 'numeric',
+                        month: 'short'
+                      })
+                    : 'الآن'}
                 </span>
               </div>
             </div>
@@ -146,31 +157,22 @@ function DashboardPage() {
           <section className="info-card stats-card">
             <div className="card-header">
               <div className="card-icon">📊</div>
-              <h2 className="card-title">الإحصائيات</h2>
+              <h2 className="card-title">معلومات الحساب</h2>
             </div>
             <div className="card-body">
               <div className="stats-grid">
                 <div className="stat-item">
-                  <div className="stat-icon">🔐</div>
+                  <div className="stat-icon">✅</div>
                   <div className="stat-info">
-                    <span className="stat-label">عدد تسجيلات الدخول</span>
-                    <span className="stat-value">{dashboardData?.stats?.loginCount || 0}</span>
+                    <span className="stat-label">حالة التأكيد</span>
+                    <span className="stat-value">{user?.email_confirmed_at ? 'مؤكد' : 'غير مؤكد'}</span>
                   </div>
                 </div>
                 <div className="stat-item">
-                  <div className="stat-icon">⏰</div>
+                  <div className="stat-icon">🔐</div>
                   <div className="stat-info">
-                    <span className="stat-label">آخر تسجيل دخول</span>
-                    <span className="stat-value">
-                      {dashboardData?.stats?.lastLogin 
-                        ? new Date(dashboardData.stats.lastLogin).toLocaleString('ar-EG', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            day: 'numeric',
-                            month: 'short'
-                          })
-                        : 'الآن'}
-                    </span>
+                    <span className="stat-label">نوع المصادقة</span>
+                    <span className="stat-value">Supabase Auth</span>
                   </div>
                 </div>
               </div>
@@ -191,7 +193,7 @@ function DashboardPage() {
               <div className="features-list">
                 <div className="feature-item">
                   <span className="feature-icon">✅</span>
-                  <span>نظام مصادقة آمن باستخدام JWT</span>
+                  <span>نظام مصادقة آمن باستخدام Supabase Auth</span>
                 </div>
                 <div className="feature-item">
                   <span className="feature-icon">✅</span>
@@ -199,7 +201,7 @@ function DashboardPage() {
                 </div>
                 <div className="feature-item">
                   <span className="feature-icon">✅</span>
-                  <span>جلب البيانات من Backend API</span>
+                  <span>Backend as a Service (BaaS)</span>
                 </div>
                 <div className="feature-item">
                   <span className="feature-icon">✅</span>
@@ -217,7 +219,7 @@ function DashboardPage() {
             </div>
             <div className="card-body">
               <div className="actions-grid">
-                <button className="action-button" onClick={fetchDashboardData}>
+                <button className="action-button" onClick={fetchUserData}>
                   <span className="action-icon">🔄</span>
                   <span>تحديث البيانات</span>
                 </button>
@@ -237,7 +239,7 @@ function DashboardPage() {
         {/* Footer */}
         <footer className="dashboard-footer">
           <p>
-            مشروع تعليمي • Dashboard محمي بـ JWT Authentication
+            مشروع تعليمي • Dashboard محمي بـ Supabase Authentication
           </p>
         </footer>
       </div>

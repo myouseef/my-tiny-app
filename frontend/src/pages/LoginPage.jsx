@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../services/api';
+import { supabase } from '../supabaseClient';
 import './LoginPage.css';
 
 function LoginPage() {
@@ -11,7 +11,7 @@ function LoginPage() {
   
   // State للنموذج
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   
@@ -40,8 +40,8 @@ function LoginPage() {
     e.preventDefault();
     
     // التحقق من البيانات
-    if (!formData.username || !formData.password) {
-      setError('يرجى إدخال اسم المستخدم وكلمة المرور');
+    if (!formData.email || !formData.password) {
+      setError('يرجى إدخال البريد الإلكتروني وكلمة المرور');
       return;
     }
     
@@ -49,20 +49,26 @@ function LoginPage() {
     setError('');
     
     try {
-      // إرسال طلب تسجيل الدخول
-      const response = await login(formData.username, formData.password);
+      // تسجيل الدخول باستخدام Supabase Auth
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
       
-      if (response.ok && response.data.success) {
+      if (error) {
+        // فشل تسجيل الدخول
+        setError(error.message === 'Invalid login credentials' 
+          ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+          : error.message);
+      } else {
         // نجح تسجيل الدخول
+        console.log('✅ تسجيل دخول ناجح:', data.user.email);
         setSuccess(true);
         
         // الانتظار قليلاً لعرض رسالة النجاح
         setTimeout(() => {
           navigate('/dashboard');
         }, 1000);
-      } else {
-        // فشل تسجيل الدخول
-        setError(response.data.message || 'فشل تسجيل الدخول');
       }
     } catch (err) {
       setError('حدث خطأ في الاتصال بالخادم');
@@ -75,7 +81,7 @@ function LoginPage() {
   // ملء البيانات التجريبية
   const fillDemoCredentials = () => {
     setFormData({
-      username: 'demo',
+      email: 'demo@example.com',
       password: 'demo123'
     });
     setError('');
@@ -118,24 +124,23 @@ function LoginPage() {
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="login-form">
-            {/* Username Field */}
+            {/* Email Field */}
             <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                اسم المستخدم
+              <label htmlFor="email" className="form-label">
+                البريد الإلكتروني
               </label>
               <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
                 className="form-input"
-                placeholder="أدخل اسم المستخدم"
+                placeholder="أدخل البريد الإلكتروني"
                 disabled={isLoading || success}
-                autoComplete="username"
+                autoComplete="email"
               />
             </div>
-
             {/* Password Field */}
             <div className="form-group">
               <label htmlFor="password" className="form-label">
@@ -196,8 +201,8 @@ function LoginPage() {
               <p className="demo-info-title">بيانات المستخدم التجريبي:</p>
               <div className="demo-credentials">
                 <div className="demo-item">
-                  <span className="demo-label">اسم المستخدم:</span>
-                  <code>demo</code>
+                  <span className="demo-label">البريد الإلكتروني:</span>
+                  <code>demo@example.com</code>
                 </div>
                 <div className="demo-item">
                   <span className="demo-label">كلمة المرور:</span>

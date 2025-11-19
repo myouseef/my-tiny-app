@@ -58,7 +58,8 @@
 
 ### الاستضافة والنشر
 - **Vercel** - استضافة Frontend
-- **Render** - استضافة Backend وقاعدة البيانات
+- **Render** - استضافة Backend
+- **Supabase** - استضافة قاعدة البيانات PostgreSQL
 - **GitHub** - إدارة الكود والنشر التلقائي
 
 ---
@@ -116,6 +117,23 @@ copy .env.example .env
 
 ### 3. إعداد قاعدة البيانات
 
+#### الخيار 1: استخدام Supabase (موصى به - سهل ومجاني)
+
+```bash
+# راجع الدليل المفصل
+# SUPABASE-SETUP-GUIDE.md
+# أو الدليل السريع
+# SUPABASE-QUICK-START.md
+```
+
+**خطوات سريعة:**
+1. إنشاء حساب على https://supabase.com
+2. إنشاء مشروع جديد
+3. تشغيل `backend/db/init.sql` من SQL Editor
+4. نسخ Connection String وتحديث `backend/.env`
+
+#### الخيار 2: استخدام PostgreSQL محلياً
+
 ```bash
 # إنشاء قاعدة البيانات
 psql -U postgres
@@ -123,10 +141,8 @@ CREATE DATABASE mydb;
 \q
 
 # تشغيل سكريبت الإعداد
-npm run db:init
-
-# اختبار الاتصال
-npm run db:test
+cd backend
+psql -U postgres -d mydb -f db/init.sql
 ```
 
 ### 4. إعداد Frontend

@@ -1,8 +1,9 @@
 // مكون لحماية المسارات
 // يتحقق من تسجيل الدخول قبل السماح بالوصول
 
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAuthenticated } from '../services/api';
+import { supabase } from '../supabaseClient';
 
 /**
  * مكون ProtectedRoute
@@ -13,9 +14,42 @@ import { isAuthenticated } from '../services/api';
  * @returns {React.ReactElement} المكون المحمي أو إعادة توجيه
  */
 function ProtectedRoute({ children }) {
-  // التحقق من تسجيل الدخول
-  if (!isAuthenticated()) {
-    // إذا لم يكن مسجل دخول، إعادة التوجيه لصفحة تسجيل الدخول
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // التحقق من المستخدم الحالي
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    // الاستماع لتغييرات حالة المصادقة
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // عرض Loading أثناء التحقق
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem'
+      }}>
+        جاري التحقق...
+      </div>
+    );
+  }
+
+  // إذا لم يكن مسجل دخول، إعادة التوجيه لصفحة تسجيل الدخول
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
   

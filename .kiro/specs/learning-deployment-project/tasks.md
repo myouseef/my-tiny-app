@@ -147,7 +147,9 @@
   - التحقق من عمل جميع الوظائف بشكل صحيح
   - _المتطلبات: 3.1, 3.2, 3.3, 3.5, 2.4_
 
-- [-] 13. إعداد GitHub Repository
+- [x] 13. إعداد GitHub Repository
+
+
 
   - إنشاء مستودع جديد على GitHub
   - إنشاء ملف .gitignore شامل (node_modules, .env, dist, build)
@@ -156,32 +158,44 @@
   - عمل commit أولي ورفع الكود إلى GitHub
   - _المتطلبات: 7.1, 7.2, 7.3, 8.1, 8.2_
 
-- [ ] 14. نشر قاعدة البيانات على Render
-  - إنشاء حساب على Render.com
-  - إنشاء PostgreSQL database جديدة (خطة مجانية)
-  - نسخ Internal Database URL
-  - الاتصال بقاعدة البيانات وتنفيذ init.sql لإنشاء الجداول
-  - التحقق من إنشاء جدول users والمستخدم التجريبي
+- [x] 14. إعداد قاعدة البيانات على Supabase
+  - إنشاء حساب على Supabase.com باستخدام GitHub
+  - إنشاء مشروع جديد (Project) مع اختيار الخطة المجانية
+  - تشغيل ملف init.sql من SQL Editor لإنشاء جدول users
+  - الحصول على Connection Pooling String (Session mode, Port 6543) من Project Settings → Database → Connection Pooling
+  - تحديث DATABASE_URL في ملف backend/.env باستخدام Pooler Connection
+  - اختبار الاتصال بقاعدة البيانات من Backend (node backend/test-connection.js)
+  - التحقق من نجاح جميع الاختبارات (Health endpoint, Login, JWT)
   - _المتطلبات: 6.2_
+  - _راجع: SUPABASE-SETUP-GUIDE.md, SUPABASE-IPV4-SOLUTION.md, GET-POOLER-CONNECTION.md_
+  - _ملاحظة مهمة: استخدم Connection Pooling (Port 6543) وليس Direct Connection (Port 5432) لدعم IPv4_
 
-- [ ] 15. نشر Backend على Render
-  - إنشاء Web Service جديد على Render
-  - ربط مستودع GitHub
-  - تحديد مجلد backend كـ Root Directory
-  - إعداد Build Command: `npm install`
-  - إعداد Start Command: `node server.js`
-  - إضافة Environment Variables (DATABASE_URL, JWT_SECRET, NODE_ENV=production)
-  - نشر الخدمة والانتظار حتى تصبح live
-  - نسخ رابط API العام
-  - اختبار API باستخدام endpoint /api/health
+- [x] 15. استخدام Supabase كـ Backend كامل
+
+
+
+  - تفعيل Supabase Auth في المشروع (Authentication → Providers → Email)
+  - إنشاء مستخدم تجريبي في Supabase Auth (demo@example.com / demo123)
+  - الحصول على Supabase Project URL و Anon Key من Project Settings → API
+  - تحديث Frontend ليستخدم Supabase Client بدلاً من Express API
+  - استخدام supabase.auth.signInWithPassword() لتسجيل الدخول
+  - استخدام supabase.auth.getUser() للحصول على معلومات المستخدم
+  - اختبار تسجيل الدخول وتسجيل الخروج محلياً
+  - التحقق من عمل جميع الوظائف بدون الحاجة لـ Express server
   - _المتطلبات: 6.1, 6.3, 6.4, 6.5_
+  - _راجع: SUPABASE-AUTH-GUIDE.md للتعليمات المفصلة_
+  - _ملاحظة: Supabase يوفر Authentication و Database و API في منصة واحدة_
 
-- [ ] 16. نشر Frontend على Vercel
+- [x] 16. نشر Frontend على Vercel
+
+
   - إنشاء حساب على Vercel.com
   - إنشاء مشروع جديد وربط مستودع GitHub
   - تحديد مجلد frontend كـ Root Directory
   - إعداد Framework Preset: Vite
-  - إضافة Environment Variable: VITE_API_URL (رابط Render API)
+  - إضافة Environment Variables:
+    - VITE_SUPABASE_URL: Project URL من Supabase
+    - VITE_SUPABASE_ANON_KEY: Anon Key من Supabase
   - نشر المشروع والانتظار حتى يكتمل البناء
   - نسخ رابط التطبيق العام
   - _المتطلبات: 5.1, 5.2, 5.4, 5.5_
@@ -193,12 +207,11 @@
   - التحقق من إعادة النشر التلقائي على Vercel
   - _المتطلبات: 5.3_
 
-- [ ] 18. تحديث CORS في Backend للإنتاج
-  - تحديث إعدادات CORS في backend/server.js
-  - إضافة رابط Vercel إلى allowed origins
-  - استخدام متغير بيئة FRONTEND_URL
-  - عمل commit و push
-  - التحقق من إعادة النشر التلقائي على Render
+- [ ] 18. تحديث إعدادات Supabase للإنتاج
+  - إضافة رابط Vercel إلى Allowed URLs في Supabase
+  - اذهب إلى Authentication → URL Configuration
+  - أضف رابط Vercel في Site URL و Redirect URLs
+  - حفظ التغييرات
   - _المتطلبات: 6.4_
 
 - [ ] 19. اختبار التطبيق المنشور
@@ -213,12 +226,11 @@
 
 - [ ] 20. إعداد Auto-Deployment
   - التحقق من ربط GitHub مع Vercel (auto-deploy on push)
-  - التحقق من ربط GitHub مع Render (auto-deploy on push)
   - عمل تغيير بسيط في الكود (مثل تغيير نص الترحيب)
   - عمل commit و push
-  - مراقبة عملية البناء والنشر التلقائي على كلا المنصتين
+  - مراقبة عملية البناء والنشر التلقائي على Vercel
   - التحقق من ظهور التغيير على الموقع المنشور
-  - _المتطلبات: 7.4, 5.2, 6.3_
+  - _المتطلبات: 7.4, 5.2_
 
 - [ ] 21. كتابة التوثيق النهائي
   - تحديث README.md مع معلومات النشر
